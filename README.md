@@ -1,13 +1,14 @@
-# AI-Powered Virtual Pet
+# AI Agent for Automated Task Planning
 
 ## About
-A simple interactive virtual pet application developed using HTML, CSS, and JavaScript.
+A task-planning web application that converts user goals into structured tasks with priorities and estimated durations.
 
 ## Features
-- Feed and play with the virtual pet.
-- Chat with the pet.
-- Display different moods and emotions.
-- Simple and user-friendly interface.
+- Accept user goals.
+- Generate step-by-step task plans.
+- Assign task priorities and durations.
+- Revise plans when requirements change.
+- Test different goals using example buttons.
 
 ## Technologies
 HTML, CSS, JavaScript
@@ -17,4 +18,4 @@ HTML, CSS, JavaScript
 2. Open `index.html` in a web browser.
 
 ## Note
-The current version uses predefined JavaScript responses and does not connect to a live Generative AI API.# AI-Task-Planning-Agent
+The current version uses rule-based JavaScript planning. It does not connect to a live Generative AI API.
