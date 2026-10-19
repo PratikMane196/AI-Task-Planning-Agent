@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Task Planning Agent</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eaf2ff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2456a6;
+        }
+
+        textarea, input {
+            width: 95%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+        }
+
+        button {
+            background: #3268c8;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            margin: 5px 3px;
+            cursor: pointer;
+        }
+
+        .task {
+            background: #f1f6ff;
+            padding: 12px;
+            margin: 10px 0;
+            border-left: 5px solid #3268c8;
+            border-radius: 5px;
+        }
+
+        .high { color: red; }
+        .medium { color: #b7791f; }
+        .low { color: green; }
+
+        #prompt {
+            background: #f4f4f4;
+            padding: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🧠 AI Task Planning Agent</h1>
+    <p>Enter your goal to generate a step-by-step plan.</p>
+
+    <h3>Enter Your Goal</h3>
+
+    <textarea id="goal"
+        placeholder="Example: Organize a two-day technical workshop for MCA students"></textarea>
+
+    <button onclick="generatePlan()">Generate Plan</button>
+
+    <h3>Change Requirements</h3>
+
+    <input id="change"
+        placeholder="Example: Change it to a one-day workshop">
+
+    <button onclick="revisePlan()">Revise Plan</button>
+
+    <button onclick="example1()">Example 1</button>
+    <button onclick="example2()">Example 2</button>
+
+    <div id="output"></div>
+
+    <h3>System Prompt</h3>
+
+    <div id="prompt">You are an AI Task Planning Agent.
+Convert the user's goal into actionable tasks.
+Assign each task a priority and estimated duration.
+When requirements change, revise the existing plan.
+Keep the plan simple, practical, and organized.</div>
+
+</div>
+
+<script>
+    let tasks = [];
+
+    function createTasks(goal) {
+        let text = goal.toLowerCase();
+
+        if (text.includes("workshop") ||
+            text.includes("seminar")) {
+
+            return [
+                ["Define workshop topics", "High", "2 hours"],
+                ["Prepare budget", "High", "3 hours"],
+                ["Invite speakers", "High", "1 day"],
+                ["Arrange venue and equipment", "High", "4 hours"],
+                ["Open student registration", "Medium", "4 hours"],
+                ["Prepare schedule and certificates", "Medium", "1 day"],
+                ["Conduct the workshop", "High",
+                    text.includes("one-day") ||
+                    text.includes("one day") ? "1 day" : "2 days"],
+                ["Collect feedback and prepare report", "Low", "3 hours"]
+            ];
+
+        } else if (text.includes("coding") ||
+                   text.includes("competition") ||
+                   text.includes("contest")) {
+
+            return [
+                ["Define competition rules", "High", "2 hours"],
+                ["Form organizing team", "High", "3 hours"],
+                ["Prepare coding questions", "High", "1 day"],
+                ["Arrange computer lab and internet", "High", "4 hours"],
+                ["Register participants", "Medium", "3 days"],
+                ["Test the coding platform", "High", "4 hours"],
+                ["Conduct the competition", "High", "1 day"],
+                ["Announce winners", "Low", "2 hours"]
+            ];
+
+        } else {
+            return [
+                ["Define the goal and objectives", "High", "1 hour"],
+                ["Divide the goal into smaller tasks", "High", "2 hours"],
+                ["Identify required resources", "High", "2 hours"],
+                ["Prepare a timeline", "Medium", "2 hours"],
+                ["Complete the main activities", "High", "As needed"],
+                ["Review progress", "Medium", "1 hour"],
+                ["Check final results", "Low", "1 hour"]
+            ];
+        }
+    }
+
+    function generatePlan() {
+        let goal = document.getElementById("goal").value.trim();
+
+        if (goal === "") {
+            alert("Please enter your goal!");
+            return;
+        }
+
+        tasks = createTasks(goal);
+        displayPlan("Generated Plan");
+    }
+
+    function revisePlan() {
+        let goal = document.getElementById("goal").value.trim();
+        let change = document.getElementById("change").value.trim();
+
+        if (goal === "" || change === "") {
+            alert("Enter your goal and the new requirement!");
+            return;
+        }
+
+        let updatedGoal = goal + ". Requirement: " + change;
+
+        tasks = createTasks(updatedGoal);
+
+        let requirement = change.toLowerCase();
+
+        if (requirement.includes("urgent")) {
+            tasks = tasks.map(task => [
+                task[0], "High", task[2]
+            ]);
+        }
+
+        if (requirement.includes("remove registration")) {
+            tasks = tasks.filter(task =>
+                !task[0].toLowerCase().includes("registration")
+            );
+        }
+
+        displayPlan("Revised Plan");
+    }
+
+    function displayPlan(title) {
+        let output = document.getElementById("output");
+
+        output.innerHTML = "<h2>" + title + "</h2>";
+
+        tasks.forEach(function(task, index) {
+            let priorityClass = task[1].toLowerCase();
+
+            output.innerHTML +=
+                '<div class="task">' +
+                '<h3>' + (index + 1) + '. ' + task[0] + '</h3>' +
+                '<p>Priority: <b class="' + priorityClass + '">' +
+                task[1] + '</b></p>' +
+                '<p>Estimated Duration: ' + task[2] + '</p>' +
+                '</div>';
+        });
+    }
+
+    function example1() {
+        document.getElementById("goal").value =
+            "Organize a two-day technical workshop for MCA students";
+
+        document.getElementById("change").value = "";
+        generatePlan();
+    }
+
+    function example2() {
+        document.getElementById("goal").value =
+            "Organize a college coding competition for 100 students";
+
+        document.getElementById("change").value = "";
+        generatePlan();
+    }
+</script>
+
+</body>
+</html>
